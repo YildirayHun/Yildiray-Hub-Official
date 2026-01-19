@@ -1,0 +1,128 @@
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+
+-- Sürükleme Fonksiyonu
+local function makeDraggable(guiObject)
+    local dragging, dragInput, dragStart, startPos
+    guiObject.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = guiObject.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    guiObject.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            guiObject.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- GUI ANA YAPI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "YildirayDuel_Final_v2"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- LOGO
+local Logo = Instance.new("ImageButton")
+Logo.Parent = ScreenGui
+Logo.Size = UDim2.new(0, 50, 0, 50)
+Logo.Position = UDim2.new(0.05, 0, 0.5, 0)
+Logo.Image = "rbxassetid://80151024359992"
+Logo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", Logo).CornerRadius = UDim.new(0, 10)
+makeDraggable(Logo)
+
+-- PANEL
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 320, 0, 220)
+Frame.Position = UDim2.new(0.4, 0, 0.35, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+makeDraggable(Frame)
+
+-- ÜST SARI BAŞLIK
+local Header = Instance.new("Frame")
+Header.Parent = Frame
+Header.Size = UDim2.new(1, -10, 0, 45)
+Header.Position = UDim2.new(0, 5, 0, 5)
+Header.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 10)
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Header
+Title.Size = UDim2.new(1, 0, 1, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "YİLDİRAY HUB"
+Title.Font = Enum.Font.FredokaOne
+Title.TextSize = 22
+Title.TextColor3 = Color3.fromRGB(35, 45, 55)
+
+-- DUEL SCRIPT YAZISI
+local DuelLabel = Instance.new("TextLabel")
+DuelLabel.Parent = Frame
+DuelLabel.Size = UDim2.new(1, 0, 0, 20)
+DuelLabel.Position = UDim2.new(0, 0, 0, 52)
+DuelLabel.BackgroundTransparency = 1
+DuelLabel.Text = "Duel Scripti"
+DuelLabel.Font = Enum.Font.FredokaOne
+DuelLabel.TextSize = 15
+DuelLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Sarı yazı
+
+Logo.MouseButton1Click:Connect(function() Frame.Visible = not Frame.Visible end)
+
+-- BUTON SİSTEMİ
+local Sari = Color3.fromRGB(255, 215, 0)
+local Gri = Color3.fromRGB(60, 60, 60)
+
+local function createButton(text, pos, color, callback)
+    local btn = Instance.new("TextButton")
+    btn.Parent = Frame
+    btn.Size = UDim2.new(0, 145, 0, 42)
+    btn.Position = pos
+    btn.BackgroundColor3 = color
+    btn.Text = text
+    btn.TextColor3 = (color == Sari) and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextSize = 16
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    btn.MouseButton1Click:Connect(callback)
+end
+
+-- 1. Çalma Hızı (Sarı)
+createButton("Çalma Hızı", UDim2.new(0.04, 0, 0.35, 0), Sari, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/YildirayHun/Yildiray-Hub-Speed-Booster/refs/heads/main/Booster-Yildiray"))()
+end)
+
+-- 2. Player Esp (Gri)
+createButton("Player Esp", UDim2.new(0.52, 0, 0.35, 0), Gri, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/YildirayHun/Yildiray-Hub-Esp/refs/heads/main/Esp"))()
+end)
+
+-- 3. Auto Grab (Gri)
+createButton("Auto Grab", UDim2.new(0.04, 0, 0.56, 0), Gri, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/YildirayHun/Yildiray-Hub-Auto-Grab/refs/heads/main/Yildiray%20Hub%20Auto%20grab"))()
+end)
+
+-- 4. No Tool Desync (Sarı) - YENİ EKLENDİ
+createButton("No Tool Desync", UDim2.new(0.52, 0, 0.56, 0), Sari, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Stickyx4/NO-TOOL-DESYNC-OMG-ILY-STICKY/refs/heads/main/no%20tool"))()
+end)
+
+-- 5. Boş (Sarı)
+createButton("Buton 5", UDim2.new(0.04, 0, 0.77, 0), Sari, function() end)
+
+-- 6. Boş (Gri)
+createButton("Buton 6", UDim2.new(0.52, 0, 0.77, 0), Gri, function() end)
