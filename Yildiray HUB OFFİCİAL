@@ -79,7 +79,7 @@ DuelLabel.BackgroundTransparency = 1
 DuelLabel.Text = "Duel Scripti"
 DuelLabel.Font = Enum.Font.FredokaOne
 DuelLabel.TextSize = 15
-DuelLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Sarı yazı
+DuelLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 
 Logo.MouseButton1Click:Connect(function() Frame.Visible = not Frame.Visible end)
 
@@ -99,30 +99,70 @@ local function createButton(text, pos, color, callback)
     btn.TextSize = 16
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
     btn.MouseButton1Click:Connect(callback)
+    return btn
 end
 
--- 1. Çalma Hızı (Sarı)
+-- INVIS FONKSIYONLARI
+local function runInvis()
+    local char = player.Character
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not char or not hum or not hrp then return end
+
+    local welds = {}
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") and part ~= hrp and part.Parent == char then
+            for _, child in pairs(part:GetChildren()) do
+                if child:IsA("Weld") or child:IsA("WeldConstraint") or child:IsA("Motor6D") then
+                    child:Destroy()
+                end
+            end
+            part.CanCollide = false
+            part.Massless = false
+            local bf = Instance.new("BodyForce")
+            bf.Force = Vector3.new(0, -part:GetMass() * 196.2, 0)
+            bf.Parent = part
+            table.insert(welds, bf)
+            part.AssemblyLinearVelocity = Vector3.new(math.random(-5, 5), math.random(-10, 0), math.random(-5, 5))
+        end
+    end
+    hum.AutoRotate = false
+    hum.PlatformStand = true
+
+    task.wait(0.5)
+    for _, force in pairs(welds) do if force and force.Parent then force:Destroy() end end
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") and not part:IsDescendantOf(char) and part.CanCollide == false and part.Transparency < 0.95 then
+            part.Transparency = 1
+        end
+        if part:IsA("MeshPart") and not part:IsDescendantOf(char) and part.CanCollide == false and part.Transparency < 0.95 then
+            part.TextureID = ""
+            part.Transparency = 1
+        end
+    end
+end
+
+-- BUTONLAR
 createButton("Çalma Hızı", UDim2.new(0.04, 0, 0.35, 0), Sari, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/YildirayHun/Yildiray-Hub-Speed-Booster/refs/heads/main/Booster-Yildiray"))()
 end)
 
--- 2. Player Esp (Gri)
 createButton("Player Esp", UDim2.new(0.52, 0, 0.35, 0), Gri, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/YildirayHun/Yildiray-Hub-Esp/refs/heads/main/Esp"))()
 end)
 
--- 3. Auto Grab (Gri)
 createButton("Auto Grab", UDim2.new(0.04, 0, 0.56, 0), Gri, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/YildirayHun/Yildiray-Hub-Auto-Grab/refs/heads/main/Yildiray%20Hub%20Auto%20grab"))()
 end)
 
--- 4. No Tool Desync (Sarı) - YENİ EKLENDİ
 createButton("No Tool Desync", UDim2.new(0.52, 0, 0.56, 0), Sari, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Stickyx4/NO-TOOL-DESYNC-OMG-ILY-STICKY/refs/heads/main/no%20tool"))()
 end)
 
--- 5. Boş (Sarı)
-createButton("Buton 5", UDim2.new(0.04, 0, 0.77, 0), Sari, function() end)
+-- 5. Görünmezlik (INVIS)
+createButton("Görünmezlik", UDim2.new(0.04, 0, 0.77, 0), Sari, function()
+    runInvis()
+end)
 
--- 6. Boş (Gri)
+-- 6. Buton 6 (Gri)
 createButton("Buton 6", UDim2.new(0.52, 0, 0.77, 0), Gri, function() end)
